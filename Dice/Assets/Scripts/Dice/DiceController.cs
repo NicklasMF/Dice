@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class DiceController : MonoBehaviour {
 
+
     public LayerMask dieValueColliderLayer;
 	[SerializeField] GameObject die6PlayerPrefab;
 	[SerializeField] GameObject die20PlayerPrefab;
@@ -12,93 +13,110 @@ public class DiceController : MonoBehaviour {
     float forceAmount = 15f;
     float angularForce = 30f;
 
-	public int currentValue = 0;
-
-	bool canRoll = false;
+    bool canRoll = false;
 	bool hasRolled = false;
-	bool dieStill = false;
+	bool diceStill = false;
 	Vector3 rotationPoint;
-	GameObject die;
+    //List<GameObject> dice = new List<GameObject>();
+    GameObject dice;
 
 	public Text txtStatus;
 	Vector3 velocity = Vector3.zero;
+    int currentValue;
 
     void Update() {
 
-		if (!die) {
+        /*if (dice.Count == 0) {
 			return;
-		}
+		}*/
 
-		if (canRoll && !hasRolled) {
-			if (Input.GetButtonDown("Fire1")) {
-				RollDie();
-			} else {
-				die.GetComponent<Rigidbody>().isKinematic = true;
-				die.GetComponent<Rigidbody>().useGravity = false;
-				die.transform.Rotate(Vector3.up * Time.deltaTime * 80);
-				die.transform.Rotate(rotationPoint * Time.deltaTime * 50);
-			}
-		}
+        if (dice == null) {
+            return;
+        }
 
-		if (dieStill) {
-			RaycastHit hit;
-			if (Physics.Raycast(die.transform.position, Vector3.up, out hit, Mathf.Infinity, dieValueColliderLayer)) {
-				currentValue = hit.collider.GetComponent<DieValue>().value;
-			}
-            if (Input.GetButtonDown("Fire1")) {
-                SetDieReady(GetComponent<GameController>().diceNumber);
-            }
+		/* Dice rotates
+		 * if (canRoll && !hasRolled) {
+			dice.GetComponent<Rigidbody>().isKinematic = true;
+			dice.GetComponent<Rigidbody>().useGravity = false;
+			dice.transform.Rotate(Vector3.up * Time.deltaTime * 80);
+			dice.transform.Rotate(rotationPoint * Time.deltaTime * 50);
+		}*/
 
-		}
+        if (diceStill) {
+        //    foreach(GameObject die in dice) {
+                RaycastHit hit;
+                if (Physics.Raycast(dice.transform.position, Vector3.up, out hit, Mathf.Infinity, dieValueColliderLayer))
+                {
+                    currentValue = hit.collider.GetComponent<Die>().value;
+                }
+        //    }
+
+        }
 
 		if (hasRolled) {
-			Camera.main.transform.position = Vector3.SmoothDamp(Camera.main.transform.position, die.transform.position + new Vector3(0, 16f, 0), ref velocity, 0.7f);
+			Camera.main.transform.position = Vector3.SmoothDamp(Camera.main.transform.position, dice.transform.position + new Vector3(0, 16f, 0), ref velocity, 0.7f);
 
-			if (currentValue != 0 && dieStill) {
-                txtStatus.text = currentValue.ToString();
+			if (currentValue != 0 && diceStill) {
+                //txtStatus.text = currentValue.ToString();
 			}
-			if (!dieStill && die.GetComponent<Rigidbody>().IsSleeping()) {
-				dieStill = true;
+			if (!diceStill && dice.GetComponent<Rigidbody>().IsSleeping()) {
+				diceStill = true;
 			}
 		} else {
 			Camera.main.transform.position = Vector3.SmoothDamp(Camera.main.transform.position, new Vector3(0, 16f, 0), ref velocity, 1.5f);
 		}
     }
 
-    public void SetDieReady(int dieNo)
+    public void ScreenTapped() {
+        if (canRoll) {
+            RollDice();
+        } else if (diceStill) {
+            SetDieReady(GetComponent<GameController>().diceCount, GetComponent<GameController>().diceType);
+        }
+    }
+
+    public void SetDieReady(int dieCount, int dieNo)
     {
-        //Camera.main.transform.position = new Vector3(0, 40f, 0);
-
-        if (die == null)
-        {
-
-            switch (dieNo)
-            {
+        /*foreach(GameObject die in dice) {
+            Destroy(die);
+        }
+        dice.Clear();
+        for (int i = 0; i < dieCount; i++) {*/
+            //GameObject die;
+        if (dice == null) {
+            switch (dieNo) {
                 case 6:
-                    die = (GameObject)Instantiate(die6PlayerPrefab);
+                    dice = Instantiate(die6PlayerPrefab);
+                    //dice.Add(die);
                     break;
                 case 20:
-                    die = (GameObject)Instantiate(die20PlayerPrefab);
+                    dice = Instantiate(die20PlayerPrefab);
+                    //dice.Add(die);
                     break;
                 default:
                     Debug.LogError("Wrong dieNo for die");
                     break;
             }
+            //}
         }
 
-        die.transform.position = dieStartPosition.position;
+        dice.transform.position = dieStartPosition.position;
         rotationPoint = (Random.Range(0, 1) == 0) ? Vector3.left : Vector3.right;
         canRoll = true;
         hasRolled = false;
-        dieStill = false;
+        diceStill = false;
     }
 
-	void RollDie() {
+	public void RollDice() {
 		hasRolled = true;
-		die.GetComponent<Rigidbody>().isKinematic = false;
-		die.GetComponent<Rigidbody>().useGravity = true;
-		die.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * 3f, ForceMode.VelocityChange);
-		die.GetComponent<Rigidbody>().AddForce(Vector3.up * Random.Range(forceAmount - 3f, forceAmount + 3f), ForceMode.VelocityChange);
-		die.GetComponent<Rigidbody>().AddTorque(Random.onUnitSphere * Random.Range(angularForce - 3f, angularForce + 13f), ForceMode.VelocityChange);
-	}
+        canRoll = false;
+        GetComponent<AnalyticsController>().hits++;
+        //foreach(GameObject die in dice) {
+            dice.GetComponent<Rigidbody>().isKinematic = false;
+            dice.GetComponent<Rigidbody>().useGravity = true;
+            dice.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * 3f, ForceMode.VelocityChange);
+            dice.GetComponent<Rigidbody>().AddForce(Vector3.up * Random.Range(forceAmount - 3f, forceAmount + 3f), ForceMode.VelocityChange);
+            dice.GetComponent<Rigidbody>().AddTorque(Random.onUnitSphere * Random.Range(angularForce - 3f, angularForce + 13f), ForceMode.VelocityChange);
+        //}
+    }
 }

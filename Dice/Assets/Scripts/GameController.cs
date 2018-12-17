@@ -6,13 +6,15 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour {
 
     DiceController diceController;
-    public int diceNumber = 6;
+    public int diceType = 6;
+    public int diceCount = 1;
+
 
 	void Awake() {
 		//DeletePlayerPrefs();
         SetDefaultPlayerPrefs();
         diceController = GetComponent<DiceController>();
-        
+        Application.targetFrameRate = 60;
 		//DiceController.HasRolledDie += FinishedRolling;
     }
 
@@ -29,12 +31,19 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void PrepareDice() {
-        diceController.SetDieReady(diceNumber);
+        diceController.SetDieReady(diceCount, diceType);
 	}
 
+    public void SetDiceCount(int _diceCount) {
+        diceCount = _diceCount;
+    }
 
-	void FinishedRolling(int sum) {
-		string txt = "Du slog " + sum + ". ";
+    public void SetDiceType() {
+
+    }
+
+	void FinishedRolling(int _sum) {
+        string txt = "Du slog " + _sum + ". ";
 
 		GetComponent<DiceController>().txtStatus.text = txt;	
 	}

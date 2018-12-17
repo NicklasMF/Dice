@@ -61,9 +61,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AnalyticsController.cs" />
+    <Compile Include="Assets\ButtonScript.cs" />
     <Compile Include="Assets\Scripts\Dice\DiceController.cs" />
-    <Compile Include="Assets\Scripts\Dice\DieValue.cs" />
+    <Compile Include="Assets\Scripts\Dice\Die.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
+    <Compile Include="Assets\UI_InGameController.cs" />
+    <Compile Include="Assets\UIController.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>/Users/nicklas/Documents/SourceTree/Dice/Dice/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
