@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour {
     DiceController diceController;
     public int diceType = 6;
     public int diceCount = 1;
+    int diceCountMax = 2;
 
 
 	void Awake() {
@@ -38,8 +39,20 @@ public class GameController : MonoBehaviour {
         diceCount = _diceCount;
     }
 
-    public void SetDiceType() {
+    public void SetDiceCount(bool _higher) {
+        if (_higher) {
+            if (diceCount < diceCountMax) {
+                diceCount++;
+            }
+        } else {
+            if (diceCount > 1) {
+                diceCount--;
+            }
+        }
+    }
 
+    public void SetDiceType(int _diceType) {
+        diceType = _diceType;
     }
 
 	void FinishedRolling(int _sum) {
