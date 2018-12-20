@@ -687,7 +687,12 @@ PlayerSettings:
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 1
   webGLLinkerTarget: 1
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: USES_BILLING
+    4: USES_BILLING
+    7: USES_BILLING
+    14: USES_BILLING
+    25: USES_BILLING
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}

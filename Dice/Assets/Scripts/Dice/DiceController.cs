@@ -73,7 +73,7 @@ public class DiceController : MonoBehaviour {
         }
     }
 
-    public void SetDieReady(int dieCount, int dieNo)
+    public void SetDieReady(int dieCount, int dieType)
     {
         foreach(GameObject die in dice) {
             Destroy(die);
@@ -81,7 +81,7 @@ public class DiceController : MonoBehaviour {
         dice.Clear();
         for (int i = 0; i < dieCount; i++) {
             GameObject die;
-            switch (dieNo) {
+            switch (dieType) {
                 case 6:
                     die = Instantiate(die6PlayerPrefab);
                     die.transform.position = dieStartPositionParent.GetChild(i).position;
